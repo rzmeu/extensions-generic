@@ -406,19 +406,21 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
         this.requestManager = createRequestManager({
             requestsPerSecond: 5,
             requestTimeout: 15000,
-            interceptor: {
-                interceptRequest: async (request) => {
-                    request.headers = {
-                        ...(request.headers ?? {}),
-                        'referer': `${DOMAIN}/`,
-                        'user-agent': this.userAgent ?? request.headers?.['user-agent']
-                    };
-                    return request;
-                },
-                interceptResponse: async (response) => {
-                    return response;
-                }
-            }
+            // interceptor: {
+            //     interceptRequest: async (request: Request): Promise<Request> => {
+            //         request.headers = {
+            //             ...(request.headers ?? {}),
+            //             'referer': `${DOMAIN}/`,
+            //             'user-agent': this.userAgent ?? request.headers?.['user-agent']
+            //         }
+            //
+            //         return request
+            //     },
+            //
+            //     interceptResponse: async (response: Response): Promise<Response> => {
+            //         return response
+            //     }
+            // }
         });
     }
     async getHomePageSections(sectionCallback) {
@@ -583,8 +585,8 @@ class Hentai2ReadParser {
     async parseChapterDetails(data, mangaId, chapterId, source) {
         const $ = this.cheerio.load(data);
         let images = [];
-        for (const scriptObj of $('script')) {
-            if ($(scriptObj).html() != null && $(scriptObj).html().includes('gData')) {
+        for (const scriptObj of $('script').toArray()) {
+            if ($(scriptObj).html() != undefined && $(scriptObj).html().includes('gData')) {
                 const gData = $(scriptObj).html();
                 const gDataClean = gData?.replace(/[\s\S]*var gData = /, '').replace(/;/g, '').replace(/'/g, '"') || '';
                 const gDataJson = JSON.parse(gDataClean);
