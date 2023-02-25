@@ -6,11 +6,36 @@
  * Request objects hold information for a particular source (see sources for example)
  * This allows us to to use a generic api to make the calls against any source
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.urlEncodeObject = exports.convertTime = exports.Source = void 0;
 class Source {
     constructor(cheerio) {
         this.cheerio = cheerio;
+    }
+    /**
+     * @deprecated use {@link Source.getSearchResults getSearchResults} instead
+     */
+    searchRequest(query, metadata) {
+        return this.getSearchResults(query, metadata);
+    }
+    /**
+     * @deprecated use {@link Source.getSearchTags} instead
+     */
+    getTags() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            // @ts-ignore
+            return (_a = this.getSearchTags) === null || _a === void 0 ? void 0 : _a.call(this);
+        });
     }
 }
 exports.Source = Source;
@@ -54,6 +79,17 @@ exports.urlEncodeObject = urlEncodeObject;
 
 },{}],3:[function(require,module,exports){
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tracker = void 0;
+class Tracker {
+    constructor(cheerio) {
+        this.cheerio = cheerio;
+    }
+}
+exports.Tracker = Tracker;
+
+},{}],4:[function(require,module,exports){
+"use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -66,8 +102,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Source"), exports);
+__exportStar(require("./Tracker"), exports);
 
-},{"./Source":2}],4:[function(require,module,exports){
+},{"./Source":2,"./Tracker":3}],5:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -84,43 +121,45 @@ __exportStar(require("./base"), exports);
 __exportStar(require("./models"), exports);
 __exportStar(require("./APIWrapper"), exports);
 
-},{"./APIWrapper":1,"./base":3,"./models":41}],5:[function(require,module,exports){
+},{"./APIWrapper":1,"./base":4,"./models":47}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 
-},{}],6:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],7:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],8:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],9:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],10:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],11:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],12:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],13:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],14:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],15:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],16:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],17:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],18:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],19:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],20:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],21:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],22:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],8:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],9:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],10:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],11:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],12:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],13:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],14:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],15:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],16:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],17:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],18:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],19:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],20:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],21:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],22:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],23:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],24:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -147,8 +186,9 @@ __exportStar(require("./Select"), exports);
 __exportStar(require("./Switch"), exports);
 __exportStar(require("./WebViewButton"), exports);
 __exportStar(require("./FormRow"), exports);
+__exportStar(require("./Stepper"), exports);
 
-},{"./Button":8,"./Form":9,"./FormRow":10,"./Header":11,"./InputField":12,"./Label":13,"./Link":14,"./MultilineLabel":15,"./NavigationButton":16,"./OAuthButton":17,"./Section":18,"./Select":19,"./Switch":20,"./WebViewButton":21}],23:[function(require,module,exports){
+},{"./Button":9,"./Form":10,"./FormRow":11,"./Header":12,"./InputField":13,"./Label":14,"./Link":15,"./MultilineLabel":16,"./NavigationButton":17,"./OAuthButton":18,"./Section":19,"./Select":20,"./Stepper":21,"./Switch":22,"./WebViewButton":23}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HomeSectionType = void 0;
@@ -160,7 +200,7 @@ var HomeSectionType;
     HomeSectionType["featured"] = "featured";
 })(HomeSectionType = exports.HomeSectionType || (exports.HomeSectionType = {}));
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LanguageCode = void 0;
@@ -208,7 +248,7 @@ var LanguageCode;
     LanguageCode["VIETNAMESE"] = "vn";
 })(LanguageCode = exports.LanguageCode || (exports.LanguageCode = {}));
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MangaStatus = void 0;
@@ -221,27 +261,37 @@ var MangaStatus;
     MangaStatus[MangaStatus["HIATUS"] = 4] = "HIATUS";
 })(MangaStatus = exports.MangaStatus || (exports.MangaStatus = {}));
 
-},{}],26:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],27:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],28:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],29:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],30:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],31:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],32:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],33:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],34:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],35:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],36:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],29:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],30:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],31:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],32:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],33:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],34:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],35:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],36:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],37:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],38:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SearchOperator = void 0;
+var SearchOperator;
+(function (SearchOperator) {
+    SearchOperator["AND"] = "AND";
+    SearchOperator["OR"] = "OR";
+})(SearchOperator = exports.SearchOperator || (exports.SearchOperator = {}));
+
+},{}],39:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentRating = void 0;
@@ -255,9 +305,11 @@ var ContentRating;
     ContentRating["ADULT"] = "ADULT";
 })(ContentRating = exports.ContentRating || (exports.ContentRating = {}));
 
-},{}],37:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],41:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagType = void 0;
@@ -275,11 +327,15 @@ var TagType;
     TagType["RED"] = "danger";
 })(TagType = exports.TagType || (exports.TagType = {}));
 
-},{}],39:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],40:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"dup":5}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],44:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],45:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],46:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"dup":6}],47:[function(require,module,exports){
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -309,13 +365,17 @@ __exportStar(require("./ResponseObject"), exports);
 __exportStar(require("./RequestManager"), exports);
 __exportStar(require("./RequestHeaders"), exports);
 __exportStar(require("./SourceInfo"), exports);
-__exportStar(require("./TrackObject"), exports);
-__exportStar(require("./OAuth"), exports);
 __exportStar(require("./SourceStateManager"), exports);
 __exportStar(require("./RequestInterceptor"), exports);
 __exportStar(require("./DynamicUI"), exports);
+__exportStar(require("./TrackedManga"), exports);
+__exportStar(require("./SourceManga"), exports);
+__exportStar(require("./TrackedMangaChapterReadAction"), exports);
+__exportStar(require("./TrackerActionQueue"), exports);
+__exportStar(require("./SearchField"), exports);
+__exportStar(require("./RawData"), exports);
 
-},{"./Chapter":5,"./ChapterDetails":6,"./Constants":7,"./DynamicUI":22,"./HomeSection":23,"./Languages":24,"./Manga":25,"./MangaTile":26,"./MangaUpdate":27,"./OAuth":28,"./PagedResults":29,"./RequestHeaders":30,"./RequestInterceptor":31,"./RequestManager":32,"./RequestObject":33,"./ResponseObject":34,"./SearchRequest":35,"./SourceInfo":36,"./SourceStateManager":37,"./SourceTag":38,"./TagSection":39,"./TrackObject":40}],42:[function(require,module,exports){
+},{"./Chapter":6,"./ChapterDetails":7,"./Constants":8,"./DynamicUI":24,"./HomeSection":25,"./Languages":26,"./Manga":27,"./MangaTile":28,"./MangaUpdate":29,"./PagedResults":30,"./RawData":31,"./RequestHeaders":32,"./RequestInterceptor":33,"./RequestManager":34,"./RequestObject":35,"./ResponseObject":36,"./SearchField":37,"./SearchRequest":38,"./SourceInfo":39,"./SourceManga":40,"./SourceStateManager":41,"./SourceTag":42,"./TagSection":43,"./TrackedManga":44,"./TrackedMangaChapterReadAction":45,"./TrackerActionQueue":46}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hentai2Read = exports.Hentai2ReadInfo = void 0;
@@ -342,23 +402,10 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
         this.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44';
-        this.parser = new Hentai2ReadParser_1.Hentai2ReadParser();
+        this.parser = new Hentai2ReadParser_1.Hentai2ReadParser(this.cheerio, DOMAIN);
         this.requestManager = createRequestManager({
             requestsPerSecond: 5,
-            requestTimeout: 15000,
-            interceptor: {
-                interceptRequest: async (request) => {
-                    request.headers = {
-                        ...(request.headers ?? {}),
-                        'referer': `${DOMAIN}/`,
-                        'user-agent': this.userAgent ?? request.headers?.['user-agent']
-                    };
-                    return request;
-                },
-                interceptResponse: async (response) => {
-                    return response;
-                }
-            }
+            requestTimeout: 15000
         });
     }
     async getHomePageSections(sectionCallback) {
@@ -401,21 +448,21 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
         const response = await this.requestManager.schedule(request, 2);
         this.CloudFlareError(response.status);
         return createPagedResults({
-            results: this.parser.parseMangaItems(this.cheerio.load(response.data)),
+            results: this.parser.parseMangaItems(response.data),
             metadata: { nextPage: page + 1 }
         });
     }
     getChapterDetails(mangaId, chapterId) {
-        return Promise.resolve(undefined);
+        return Promise.prototype;
     }
     getChapters(mangaId) {
         return Promise.resolve([]);
     }
     getMangaDetails(mangaId) {
-        return Promise.resolve(undefined);
+        return Promise.prototype;
     }
     getSearchResults(query, metadata) {
-        return Promise.resolve(undefined);
+        return Promise.prototype;
     }
     searchRequest(query, metadata) {
         throw new Error('Method not implemented.');
@@ -428,26 +475,33 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
 }
 exports.Hentai2Read = Hentai2Read;
 
-},{"./Hentai2ReadParser":43,"paperback-extensions-common":4}],43:[function(require,module,exports){
+},{"./Hentai2ReadParser":49,"paperback-extensions-common":5}],49:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hentai2ReadParser = void 0;
 class Hentai2ReadParser {
-    constructor() {
-        this.parseMangaItems = (result) => {
+    constructor(cheerio, domain) {
+        this.parseMangaItems = (data) => {
             const mangaTiles = [];
-            for (let i = 0; i < result.data.length; i++) {
+            const $ = this.cheerio.load(data);
+            const items = $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray();
+            for (const obj of $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray()) {
+                const id = $('a.title', obj).attr('href').replace(this.domain, '').replaceAll('/', '');
+                const image = $('picture>img', obj).attr('data-src').replace('/cdn-cgi/image/format=auto/', '');
+                const title = $('a.title > span.title-text', obj).text();
                 mangaTiles.push(createMangaTile({
-                    id: result.data[i].slug,
-                    image: result.data[i].preview.sizes.small_thumb,
-                    title: createIconText({ text: result.data[i].title })
+                    id: id,
+                    image: image,
+                    title: createIconText({ text: title })
                 }));
             }
             return mangaTiles;
         };
+        this.cheerio = cheerio;
+        this.domain = domain;
     }
 }
 exports.Hentai2ReadParser = Hentai2ReadParser;
 
-},{}]},{},[42])(42)
+},{}]},{},[48])(48)
 });
