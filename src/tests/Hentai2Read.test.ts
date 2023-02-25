@@ -20,7 +20,7 @@ describe('Hentai2Read Tests', () => {
      * Try to choose a manga which is updated frequently, so that the historical checking test can
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    const mangaId = 'water-overflow-12' // Water Overflow
+    const mangaId = 'tamashii_insert_level' // Water Overflow
 
     it('Testing Home-Page aquisition', async() => {
         const homePages = await wrapper.getHomePageSections(source)

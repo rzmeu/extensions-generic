@@ -62,6 +62,9 @@ export class Hentai2Read extends Source {
                 })
             )
         }
+
+        // Make sure the function completes
+        await Promise.all(promises)
     }
 
     override async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
@@ -101,17 +104,37 @@ export class Hentai2Read extends Source {
         })
     }
 
-    getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
+    async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
+        const request = createRequestObject({
+            url: `${DOMAIN}/${mangaId}/${chapterId}`,
+            method: 'GET',
+        })
 
-        return Promise.prototype
+        const response = await this.requestManager.schedule(request, 3)
+        this.CloudFlareError(response.status)
+        return this.parser.parseChapterDetails(response.data, mangaId, chapterId, this)
     }
 
-    getChapters(mangaId: string): Promise<Chapter[]> {
-        return Promise.resolve([])
+    async getChapters(mangaId: string): Promise<Chapter[]> {
+        const request = createRequestObject({
+            url: `${DOMAIN}/${mangaId}`,
+            method: 'GET',
+        })
+
+        const response = await this.requestManager.schedule(request, 3)
+        this.CloudFlareError(response.status)
+        return this.parser.parseChapters(response.data, mangaId)
     }
 
-    getMangaDetails(mangaId: string): Promise<Manga> {
-        return Promise.prototype
+    async getMangaDetails(mangaId: string): Promise<Manga> {
+        const request = createRequestObject({
+            url: `${DOMAIN}/${mangaId}`,
+            method: 'GET',
+        })
+
+        const response = await this.requestManager.schedule(request, 1)
+        this.CloudFlareError(response.status)
+        return this.parser.parseMangaDetails(response.data, mangaId, this)
     }
 
     getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
