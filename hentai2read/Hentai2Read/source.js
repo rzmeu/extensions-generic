@@ -417,6 +417,9 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
     getSearchResults(query, metadata) {
         return Promise.resolve(undefined);
     }
+    searchRequest(query, metadata) {
+        throw new Error('Method not implemented.');
+    }
     CloudFlareError(status) {
         if (status == 503) {
             throw new Error('CLOUDFLARE BYPASS ERROR:\nPlease go to Settings > Sources > <The name of this source> and press Cloudflare Bypass');
