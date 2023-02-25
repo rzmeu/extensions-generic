@@ -44,11 +44,11 @@ export class Hentai2Read extends Source {
     });
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        const section1 = createHomeSection({id: 'latest', title: 'Latest', view_more: true, type: HomeSectionType.singleRowLarge})
-        const section2 = createHomeSection({id: 'popular', title: 'Popular', view_more: true, type: HomeSectionType.singleRowLarge})
-        const section3 = createHomeSection({id: 'trending', title: 'Trending', view_more: true, type: HomeSectionType.singleRowLarge})
-        const section4 = createHomeSection({id: 'top-rated', title: 'Top Rated', view_more: true, type: HomeSectionType.singleRowLarge})
-        const section5 = createHomeSection({id: 'milfs', title: 'Milfs', view_more: true, type: HomeSectionType.singleRowLarge})
+        const section1 = createHomeSection({id: 'latest', title: 'Latest', view_more: true, type: HomeSectionType.singleRowNormal})
+        const section2 = createHomeSection({id: 'popular', title: 'Popular', view_more: true, type: HomeSectionType.singleRowNormal})
+        const section3 = createHomeSection({id: 'trending', title: 'Trending', view_more: true, type: HomeSectionType.singleRowNormal})
+        const section4 = createHomeSection({id: 'top-rated', title: 'Top Rated', view_more: true, type: HomeSectionType.singleRowNormal})
+        const section5 = createHomeSection({id: 'milfs', title: 'Milfs', view_more: true, type: HomeSectionType.singleRowNormal})
         const sections = [section1, section2, section3, section4, section5]
 
         for(const section of sections) {
