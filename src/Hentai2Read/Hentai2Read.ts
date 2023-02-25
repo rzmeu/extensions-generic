@@ -126,6 +126,10 @@ export class Hentai2Read extends Source {
         return Promise.resolve(undefined)
     }
 
+    searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
+        throw new Error('Method not implemented.');
+    }
+
     CloudFlareError(status: any) {
         if (status == 503) {
             throw new Error('CLOUDFLARE BYPASS ERROR:\nPlease go to Settings > Sources > <The name of this source> and press Cloudflare Bypass')
