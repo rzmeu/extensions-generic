@@ -36,26 +36,11 @@ export const Hentai2ReadInfo: SourceInfo = {
 export class Hentai2Read extends Source {
     userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44';
 
-    parser = new Hentai2ReadParser()
+    parser = new Hentai2ReadParser(this.cheerio, DOMAIN)
 
     requestManager = createRequestManager({
         requestsPerSecond: 5,
-        requestTimeout: 15000,
-        interceptor: {
-            interceptRequest: async (request: Request): Promise<Request> => {
-                request.headers = {
-                    ...(request.headers ?? {}),
-                    'referer': `${DOMAIN}/`,
-                    'user-agent': this.userAgent ?? request.headers?.['user-agent']
-                }
-
-                return request
-            },
-
-            interceptResponse: async (response: Response): Promise<Response> => {
-                return response
-            }
-        }
+        requestTimeout: 15000
     });
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
@@ -105,13 +90,14 @@ export class Hentai2Read extends Source {
         this.CloudFlareError(response.status)
 
         return createPagedResults({
-            results: this.parser.parseMangaItems(this.cheerio.load(response.data)),
+            results: this.parser.parseMangaItems(response.data),
             metadata: {nextPage: page + 1}
         })
     }
 
     getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-        return Promise.resolve(undefined)
+
+        return Promise.prototype
     }
 
     getChapters(mangaId: string): Promise<Chapter[]> {
@@ -119,15 +105,15 @@ export class Hentai2Read extends Source {
     }
 
     getMangaDetails(mangaId: string): Promise<Manga> {
-        return Promise.resolve(undefined)
+        return Promise.prototype
     }
 
     getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-        return Promise.resolve(undefined)
+        return Promise.prototype
     }
 
-    searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
-        throw new Error('Method not implemented.');
+    override searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
+        throw new Error('Method not implemented.')
     }
 
     CloudFlareError(status: any) {
