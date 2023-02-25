@@ -1,9 +1,14 @@
 import {
-    Chapter, ChapterDetails, LanguageCode,
-    Manga, MangaStatus,
-    MangaTile, Tag, TagSection
+    Chapter,
+    ChapterDetails,
+    LanguageCode,
+    Manga,
+    MangaStatus,
+    MangaTile,
+    Tag,
+    TagSection
 } from 'paperback-extensions-common'
-import {CheerioAPI} from 'cheerio/lib/cheerio';
+import {CheerioAPI} from 'cheerio/lib/cheerio'
 
 
 export class Hentai2ReadParser {
@@ -18,8 +23,6 @@ export class Hentai2ReadParser {
     parseMangaItems = (data: string): MangaTile[] => {
         const mangaTiles: MangaTile[] = []
         const $ = this.cheerio.load(data)
-
-        const items = $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray()
 
         for(const obj of $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray()) {
             const id = $('a.title', obj).attr('href')!.replace(this.domain, '').replaceAll('/', '')
@@ -74,12 +77,13 @@ export class Hentai2ReadParser {
         const langCode = LanguageCode.ENGLISH
 
         for(const obj of $('ul.nav-chapters > li').toArray()) {
+            const chapterId = $('div.media > a', obj).attr('href')!.replace(this.domain, '').replace(mangaId, '').replaceAll('/', '')
             chapters.push(createChapter({
-                id: mangaId,
+                id: chapterId,
                 mangaId: mangaId,
                 name: $('div.media > a', obj).text().replaceAll('\n', ''),
                 langCode: langCode,
-                chapNum: parseInt($('div.media > a', obj).attr('href')!.replace(this.domain, '').replace(mangaId, '').replaceAll('/', '')),
+                chapNum: parseInt(chapterId),
                 time: new Date(),
             }))
         }
@@ -89,46 +93,21 @@ export class Hentai2ReadParser {
 
     async parseChapterDetails(data: string, mangaId: string, chapterId: string, source: any): Promise<ChapterDetails> {
         const $ = this.cheerio.load(data)
+        let images =[]
 
         for (const scriptObj of $('script')) {
             if($(scriptObj).html() != null && $(scriptObj).html()!.includes('gData')) {
-                const d = ''
+                const gData = $(scriptObj).html()
+                const gDataClean: string = gData?.replace(/[\s\S]*var gData = /, '').replace(/;/g, '').replace(/'/g, '"') || ''
+                const gDataJson = JSON.parse(gDataClean)
+                images = gDataJson.images.map((el: string) => `https://cdn-ngocok-static.sinxdr.workers.dev/hentai${el}`)
             }
         }
-
-
-        const pages: string[] = []
-
-        const pageCount = Number($('#load_pages').attr('value'))
-        const imgDir = $('#load_dir').attr('value')
-        const imgId = $('#load_id').attr('value')
-
-        if (!pageCount || isNaN(pageCount)) {
-            throw new Error(`Unable to parse pageCount (found: ${pageCount}) for mangaId:${mangaId}`)
-        }
-        if (!imgDir) {
-            throw new Error(`Unable to parse imgDir (found: ${imgDir}) for mangaId:${mangaId}`)
-        }
-        if (!imgId) {
-            throw new Error(`Unable to parse imgId (found: ${imgId}) for mangaId:${mangaId}`)
-        }
-
-        //const domain = this.getImageSrc($('img.lazy, div.cover > img').first())
-        //const subdomainRegex = domain.match(/\/\/([^.]+)/)
-
-        // let subdomain = null
-        // if (subdomainRegex && subdomainRegex[1]) subdomain = subdomainRegex[1]
-
-        // const domainSplit = source.baseUrl.split('//')
-        //
-        // for (let i = 1; i < pageCount; i++) {
-        //     pages.push(`${domainSplit[0]}//${subdomain}.${domainSplit[1]}/${imgDir}/${imgId}/${i}.jpg`)
-        // }
 
         return createChapterDetails({
             id: chapterId,
             mangaId: mangaId,
-            pages: pages,
+            pages: images,
             longStrip: true
         })
     }
