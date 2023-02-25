@@ -405,7 +405,20 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
         this.parser = new Hentai2ReadParser_1.Hentai2ReadParser(this.cheerio, DOMAIN);
         this.requestManager = createRequestManager({
             requestsPerSecond: 5,
-            requestTimeout: 15000
+            requestTimeout: 15000,
+            interceptor: {
+                interceptRequest: async (request) => {
+                    request.headers = {
+                        ...(request.headers ?? {}),
+                        'referer': `${DOMAIN}/`,
+                        'user-agent': this.userAgent ?? request.headers?.['user-agent']
+                    };
+                    return request;
+                },
+                interceptResponse: async (response) => {
+                    return response;
+                }
+            }
         });
     }
     async getHomePageSections(sectionCallback) {
@@ -508,7 +521,6 @@ class Hentai2ReadParser {
         this.parseMangaItems = (data) => {
             const mangaTiles = [];
             const $ = this.cheerio.load(data);
-            const items = $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray();
             for (const obj of $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray()) {
                 const id = $('a.title', obj).attr('href').replace(this.domain, '').replaceAll('/', '');
                 const image = $('picture>img', obj).attr('data-src').replace('/cdn-cgi/image/format=auto/', '');
@@ -556,12 +568,13 @@ class Hentai2ReadParser {
         const chapters = [];
         const langCode = paperback_extensions_common_1.LanguageCode.ENGLISH;
         for (const obj of $('ul.nav-chapters > li').toArray()) {
+            const chapterId = $('div.media > a', obj).attr('href').replace(this.domain, '').replace(mangaId, '').replaceAll('/', '');
             chapters.push(createChapter({
-                id: mangaId,
+                id: chapterId,
                 mangaId: mangaId,
                 name: $('div.media > a', obj).text().replaceAll('\n', ''),
                 langCode: langCode,
-                chapNum: parseInt($('div.media > a', obj).attr('href').replace(this.domain, '').replace(mangaId, '').replaceAll('/', '')),
+                chapNum: parseInt(chapterId),
                 time: new Date(),
             }));
         }
@@ -569,37 +582,19 @@ class Hentai2ReadParser {
     }
     async parseChapterDetails(data, mangaId, chapterId, source) {
         const $ = this.cheerio.load(data);
+        let images = [];
         for (const scriptObj of $('script')) {
             if ($(scriptObj).html() != null && $(scriptObj).html().includes('gData')) {
-                const d = '';
+                const gData = $(scriptObj).html();
+                const gDataClean = gData?.replace(/[\s\S]*var gData = /, '').replace(/;/g, '').replace(/'/g, '"') || '';
+                const gDataJson = JSON.parse(gDataClean);
+                images = gDataJson.images.map((el) => `https://cdn-ngocok-static.sinxdr.workers.dev/hentai${el}`);
             }
         }
-        const pages = [];
-        const pageCount = Number($('#load_pages').attr('value'));
-        const imgDir = $('#load_dir').attr('value');
-        const imgId = $('#load_id').attr('value');
-        if (!pageCount || isNaN(pageCount)) {
-            throw new Error(`Unable to parse pageCount (found: ${pageCount}) for mangaId:${mangaId}`);
-        }
-        if (!imgDir) {
-            throw new Error(`Unable to parse imgDir (found: ${imgDir}) for mangaId:${mangaId}`);
-        }
-        if (!imgId) {
-            throw new Error(`Unable to parse imgId (found: ${imgId}) for mangaId:${mangaId}`);
-        }
-        //const domain = this.getImageSrc($('img.lazy, div.cover > img').first())
-        //const subdomainRegex = domain.match(/\/\/([^.]+)/)
-        // let subdomain = null
-        // if (subdomainRegex && subdomainRegex[1]) subdomain = subdomainRegex[1]
-        // const domainSplit = source.baseUrl.split('//')
-        //
-        // for (let i = 1; i < pageCount; i++) {
-        //     pages.push(`${domainSplit[0]}//${subdomain}.${domainSplit[1]}/${imgDir}/${imgId}/${i}.jpg`)
-        // }
         return createChapterDetails({
             id: chapterId,
             mangaId: mangaId,
-            pages: pages,
+            pages: images,
             longStrip: true
         });
     }
