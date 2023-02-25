@@ -51,10 +51,16 @@ export class Hentai2Read extends Source {
         const section5 = createHomeSection({id: 'milfs', title: 'Milfs', view_more: true, type: HomeSectionType.singleRowNormal})
         const sections = [section1, section2, section3, section4, section5]
 
+        const promises: Promise<void>[] = []
         for(const section of sections) {
-            const sectionPagedResult = await this.getViewMoreItems(section.id, {nextPage: 1})
-            section.items = sectionPagedResult?.results
             sectionCallback(section)
+
+            promises.push(
+                this.getViewMoreItems(section.id, {nextPage: 1}).then(sectionPagedResult => {
+                    section.items = sectionPagedResult?.results
+                    sectionCallback(section)
+                })
+            )
         }
     }
 
