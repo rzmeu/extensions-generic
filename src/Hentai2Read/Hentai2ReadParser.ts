@@ -93,10 +93,10 @@ export class Hentai2ReadParser {
 
     async parseChapterDetails(data: string, mangaId: string, chapterId: string, source: any): Promise<ChapterDetails> {
         const $ = this.cheerio.load(data)
-        let images =[]
+        let images = []
 
-        for (const scriptObj of $('script')) {
-            if($(scriptObj).html() != null && $(scriptObj).html()!.includes('gData')) {
+        for (const scriptObj of $('script').toArray()) {
+            if($(scriptObj).html() != undefined && $(scriptObj).html()!.includes('gData')) {
                 const gData = $(scriptObj).html()
                 const gDataClean: string = gData?.replace(/[\s\S]*var gData = /, '').replace(/;/g, '').replace(/'/g, '"') || ''
                 const gDataJson = JSON.parse(gDataClean)

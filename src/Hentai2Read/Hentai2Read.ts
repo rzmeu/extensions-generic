@@ -41,21 +41,21 @@ export class Hentai2Read extends Source {
     requestManager = createRequestManager({
         requestsPerSecond: 5,
         requestTimeout: 15000,
-        interceptor: {
-            interceptRequest: async (request: Request): Promise<Request> => {
-                request.headers = {
-                    ...(request.headers ?? {}),
-                    'referer': `${DOMAIN}/`,
-                    'user-agent': this.userAgent ?? request.headers?.['user-agent']
-                }
-
-                return request
-            },
-
-            interceptResponse: async (response: Response): Promise<Response> => {
-                return response
-            }
-        }
+        // interceptor: {
+        //     interceptRequest: async (request: Request): Promise<Request> => {
+        //         request.headers = {
+        //             ...(request.headers ?? {}),
+        //             'referer': `${DOMAIN}/`,
+        //             'user-agent': this.userAgent ?? request.headers?.['user-agent']
+        //         }
+        //
+        //         return request
+        //     },
+        //
+        //     interceptResponse: async (response: Response): Promise<Response> => {
+        //         return response
+        //     }
+        // }
     });
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
