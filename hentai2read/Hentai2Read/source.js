@@ -409,11 +409,11 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
         });
     }
     async getHomePageSections(sectionCallback) {
-        const section1 = createHomeSection({ id: 'latest', title: 'Latest', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowLarge });
-        const section2 = createHomeSection({ id: 'popular', title: 'Popular', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowLarge });
-        const section3 = createHomeSection({ id: 'trending', title: 'Trending', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowLarge });
-        const section4 = createHomeSection({ id: 'top-rated', title: 'Top Rated', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowLarge });
-        const section5 = createHomeSection({ id: 'milfs', title: 'Milfs', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowLarge });
+        const section1 = createHomeSection({ id: 'latest', title: 'Latest', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowNormal });
+        const section2 = createHomeSection({ id: 'popular', title: 'Popular', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowNormal });
+        const section3 = createHomeSection({ id: 'trending', title: 'Trending', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowNormal });
+        const section4 = createHomeSection({ id: 'top-rated', title: 'Top Rated', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowNormal });
+        const section5 = createHomeSection({ id: 'milfs', title: 'Milfs', view_more: true, type: paperback_extensions_common_1.HomeSectionType.singleRowNormal });
         const sections = [section1, section2, section3, section4, section5];
         for (const section of sections) {
             const sectionPagedResult = await this.getViewMoreItems(section.id, { nextPage: 1 });
