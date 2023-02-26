@@ -2473,9 +2473,17 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
         });
         const response = await this.requestManager.schedule(request, 2);
         this.CloudFlareError(response.status);
+        const tiles = this.parser.parseMangaItems(response.data);
+        let mData;
+        if (tiles.length < 48) {
+            mData = undefined;
+        }
+        else {
+            mData = { nextPage: page + 1 };
+        }
         return createPagedResults({
-            results: this.parser.parseMangaItems(response.data),
-            metadata: { nextPage: page + 1 }
+            results: tiles,
+            metadata: mData
         });
     }
     async getChapterDetails(mangaId, chapterId) {
@@ -2531,9 +2539,17 @@ class Hentai2Read extends paperback_extensions_common_1.Source {
             metadata: { nextPage: page + 1 }
         });
         const response = await this.requestManager.schedule(request, 1);
+        const tiles = this.parser.parseMangaItems(response.data);
+        let mData;
+        if (tiles.length < 48) {
+            mData = undefined;
+        }
+        else {
+            mData = { nextPage: page + 1 };
+        }
         return createPagedResults({
-            results: this.parser.parseMangaItems(response.data),
-            metadata: { nextPage: page + 1 }
+            results: tiles,
+            metadata: mData
         });
     }
     getSearchResults(query, metadata) {
