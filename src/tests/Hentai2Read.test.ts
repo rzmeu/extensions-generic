@@ -72,7 +72,24 @@ describe('Hentai2Read Tests', () => {
 
     it('Testing search', async () => {
         const testSearch: SearchRequest = {
-            title: 'Solo Bug Player',
+            title: 'girl',
+            parameters: {}
+        }
+
+        const search = await wrapper.searchRequest(source, testSearch, {offset: 0})
+        const result = search.results[0]
+
+        expect(result, 'No response from server').to.exist
+
+        expect(result?.id, 'No ID found for search query').to.be.not.empty
+        expect(result?.image, 'No image found for search').to.be.not.empty
+        expect(result?.title, 'No title').to.be.not.null
+        expect(result?.subtitleText, 'No subtitle text').to.be.not.null
+    })
+
+    it('Testing tags', async () => {
+        const testSearch: SearchRequest = {
+            includedTags: [{id: '1514', label: 'Bikini'},{id: '403', label: 'Beach'}],
             parameters: {}
         }
 

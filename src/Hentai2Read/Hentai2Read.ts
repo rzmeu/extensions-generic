@@ -9,10 +9,11 @@ import {
     PagedResults,
     SearchRequest,
     Source,
-    SourceInfo,
+    SourceInfo, TagSection,
     TagType
 } from 'paperback-extensions-common'
 import {Hentai2ReadParser} from './Hentai2ReadParser'
+import * as stream from "stream";
 
 const DOMAIN = 'https://hentai2read.com'
 
@@ -40,22 +41,7 @@ export class Hentai2Read extends Source {
 
     requestManager = createRequestManager({
         requestsPerSecond: 5,
-        requestTimeout: 15000,
-        // interceptor: {
-        //     interceptRequest: async (request: Request): Promise<Request> => {
-        //         request.headers = {
-        //             ...(request.headers ?? {}),
-        //             'referer': `${DOMAIN}/`,
-        //             'user-agent': this.userAgent ?? request.headers?.['user-agent']
-        //         }
-        //
-        //         return request
-        //     },
-        //
-        //     interceptResponse: async (response: Response): Promise<Response> => {
-        //         return response
-        //     }
-        // }
+        requestTimeout: 15000
     });
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
@@ -152,13 +138,55 @@ export class Hentai2Read extends Source {
         return this.parser.parseMangaDetails(response.data, mangaId, this)
     }
 
+    override async getSearchTags(): Promise<TagSection[]> {
+        return this.parser.getTags()
+    }
+
+    override async searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
+        const page = metadata?.nextPage || 1
+
+        let jsonQ = ''
+
+        if(query.title) {
+            jsonQ = `a:10:{s:7:"nme_opr";s:1:"0";s:3:"nme";s:${query.title.length}:"${query.title}";s:7:"ats_opr";s:1:"1";s:3:"ats";s:0:"";s:7:"chr_opr";s:1:"1";s:3:"chr";s:0:"";s:3:"tag";a:3:{s:3:"inc";N;s:3:"exc";N;s:3:"mde";s:2:"or";}s:11:"rls_yer_opr";s:1:"0";s:7:"rls_yer";s:0:"";s:3:"sts";s:1:"0";}`
+        } else if(query.includedTags) {
+            let tagQuery = `a:${query.includedTags.length}:{`
+
+            for(let i = 0; i < query.includedTags.length; i++) {
+                const tagId = query.includedTags[i]!.id + ''
+                tagQuery += `i:${i};s:${tagId.length}:"${tagId}";`
+            }
+            tagQuery += '}'
+
+            jsonQ = `a:10:{s:7:"nme_opr";s:1:"1";s:3:"nme";s:0:"";s:7:"ats_opr";s:1:"1";s:3:"ats";s:0:"";s:7:"chr_opr";s:1:"1";s:3:"chr";s:0:"";s:3:"tag";a:3:{s:3:"inc";${tagQuery}s:3:"exc";N;s:3:"mde";s:3:"and";}s:11:"rls_yer_opr";s:1:"0";s:7:"rls_yer";s:0:"";s:3:"sts";s:1:"0";}`
+        }
+
+        const base64 = Buffer.from(jsonQ).toString('base64')
+
+
+        const url = `${DOMAIN}/hentai-list/advanced-search/${base64}/all/last-added/${page}`
+
+        const request = createRequestObject({
+            url: url,
+            method: 'GET',
+            metadata: {nextPage: page + 1}
+        })
+
+        const response = await this.requestManager.schedule(request, 1)
+
+        return createPagedResults({
+            results: this.parser.parseMangaItems(response.data),
+            metadata: {nextPage: page + 1}
+        })
+    }
+
     getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
         return Promise.prototype
     }
 
-    override searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
-        throw new Error('Method not implemented.')
-    }
+    // override searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
+    //     throw new Error('Method not implemented.')
+    // }
 
     CloudFlareError(status: any) {
         if (status == 503) {
