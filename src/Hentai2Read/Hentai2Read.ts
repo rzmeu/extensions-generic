@@ -99,9 +99,18 @@ export class Hentai2Read extends Source {
         const response = await this.requestManager.schedule(request, 2)
         this.CloudFlareError(response.status)
 
+        const tiles = this.parser.parseMangaItems(response.data)
+
+        let mData
+        if (tiles.length < 48) {
+            mData = undefined
+        } else {
+            mData = {nextPage: page + 1}
+        }
+
         return createPagedResults({
-            results: this.parser.parseMangaItems(response.data),
-            metadata: {nextPage: page + 1}
+            results: tiles,
+            metadata: mData
         })
     }
 
@@ -174,11 +183,22 @@ export class Hentai2Read extends Source {
 
         const response = await this.requestManager.schedule(request, 1)
 
+        const tiles = this.parser.parseMangaItems(response.data)
+
+        let mData
+        if (tiles.length < 48) {
+            mData = undefined
+        } else {
+            mData = {nextPage: page + 1}
+        }
+
         return createPagedResults({
-            results: this.parser.parseMangaItems(response.data),
-            metadata: {nextPage: page + 1}
+            results: tiles,
+            metadata: mData
         })
     }
+
+
 
     getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
         return Promise.prototype
