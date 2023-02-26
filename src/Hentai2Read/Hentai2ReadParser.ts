@@ -4,12 +4,12 @@ import {
     LanguageCode,
     Manga,
     MangaStatus,
-    MangaTile,
+    MangaTile, PagedResults,
     Tag,
     TagSection
 } from 'paperback-extensions-common'
 import {CheerioAPI} from 'cheerio/lib/cheerio'
-
+import entities = require('entities')
 
 export class Hentai2ReadParser {
     cheerio: CheerioAPI;
@@ -20,14 +20,14 @@ export class Hentai2ReadParser {
         this.domain = domain
     }
 
-    parseMangaItems = (data: string): MangaTile[] => {
+    parsePagedResult = (data: string, page: number): PagedResults => {
         const mangaTiles: MangaTile[] = []
         const $ = this.cheerio.load(data)
 
         for(const obj of $('div.row.book-grid > div.col-xs-6.col-sm-4.col-md-3.col-xl-2').toArray()) {
             const id = $('a.title', obj).attr('href')!.replace(this.domain, '').replaceAll('/', '')
             const image = $('picture>img', obj).attr('data-src')!.replace('/cdn-cgi/image/format=auto/', '')
-            const title = $('a.title > span.title-text', obj).text()
+            const title = this.decodeHTMLEntity($('a.title > span.title-text', obj).text())
 
             mangaTiles.push(createMangaTile({
                 id: id,
@@ -36,14 +36,28 @@ export class Hentai2ReadParser {
             }))
         }
 
-        return mangaTiles
+        let mData
+        if (mangaTiles.length < 48) {
+            mData = undefined
+        } else {
+            mData = {nextPage: page + 1}
+        }
+
+        return createPagedResults({
+            results: mangaTiles,
+            metadata: mData
+        })
+    }
+
+    protected decodeHTMLEntity(str: string): string {
+        return entities.decodeHTML(str)
     }
 
     parseMangaDetails(data: string, mangaId: string, source: any): Manga {
         const titles: string[] = []
         const $ = this.cheerio.load(data)
 
-        titles.push($('h3.block-title > a').text())
+        titles.push(this.decodeHTMLEntity($('h3.block-title > a').text()))
         //
         const image = $('div.img-container img').attr('src')
         //
@@ -78,17 +92,51 @@ export class Hentai2ReadParser {
 
         for(const obj of $('ul.nav-chapters > li').toArray()) {
             const chapterId = $('div.media > a', obj).attr('href')!.replace(this.domain, '').replace(mangaId, '').replaceAll('/', '')
+            const chapterNameText = $('div.media > a', obj).text()
+            const chapterNameCleanup = chapterNameText.replaceAll('\n', '')
+            const chapterNameWithoutNumber = chapterNameCleanup.replace(chapterId + ' - ', '')
+            const chapterNameArr = chapterNameWithoutNumber.split(' uploaded by ')
+            const chapterName = this.decodeHTMLEntity(chapterNameArr[0]!)
+
+            const uploadedDateText = chapterNameArr[1]!.split(' about ')[1]!.replace(' ago', '')
+
             chapters.push(createChapter({
                 id: chapterId,
                 mangaId: mangaId,
-                name: $('div.media > a', obj).text().replaceAll('\n', '').replace(chapterId + ' - ', ''),
+                name: chapterName,
                 langCode: langCode,
                 chapNum: parseInt(chapterId),
-                time: new Date(),
+                time: this.parseChapterUploadDate(uploadedDateText),
             }))
         }
 
         return chapters
+    }
+
+    parseChapterUploadDate(uploadedDateText: string): Date {
+        if (uploadedDateText.includes('hour')) {
+            const now = new Date()
+            now.setHours(now.getHours() - parseInt(uploadedDateText.split('hour')[0]!))
+            return now
+        } else if (uploadedDateText.includes('day')) {
+            const now = new Date()
+            now.setDate(now.getDate() - parseInt(uploadedDateText.split('day')[0]!))
+            return now
+        } else if (uploadedDateText.includes('week')) {
+            const now = new Date()
+            now.setDate(now.getDate() - parseInt(uploadedDateText.split('week')[0]!) * 7)
+            return now
+        } else if (uploadedDateText.includes('month')) {
+            const now = new Date()
+            now.setMonth(now.getMonth() - parseInt(uploadedDateText.split('month')[0]!))
+            return now
+        } else if (uploadedDateText.includes('year')) {
+            const now = new Date()
+            now.setFullYear(now.getFullYear() - parseInt(uploadedDateText.split('year')[0]!))
+            return now
+        }
+
+        return new Date()
     }
 
     async parseChapterDetails(data: string, mangaId: string, chapterId: string, source: any): Promise<ChapterDetails> {

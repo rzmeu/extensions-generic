@@ -9,11 +9,11 @@ import {
     PagedResults,
     SearchRequest,
     Source,
-    SourceInfo, TagSection,
+    SourceInfo,
+    TagSection,
     TagType
 } from 'paperback-extensions-common'
 import {Hentai2ReadParser} from './Hentai2ReadParser'
-import * as stream from "stream";
 
 const DOMAIN = 'https://hentai2read.com'
 
@@ -49,8 +49,7 @@ export class Hentai2Read extends Source {
         const section2 = createHomeSection({id: 'popular', title: 'Popular', view_more: true, type: HomeSectionType.singleRowNormal})
         const section3 = createHomeSection({id: 'trending', title: 'Trending', view_more: true, type: HomeSectionType.singleRowNormal})
         const section4 = createHomeSection({id: 'top-rated', title: 'Top Rated', view_more: true, type: HomeSectionType.singleRowNormal})
-        const section5 = createHomeSection({id: 'milfs', title: 'Milfs', view_more: true, type: HomeSectionType.singleRowNormal})
-        const sections = [section1, section2, section3, section4, section5]
+        const sections = [section1, section2, section3, section4]
 
         const promises: Promise<void>[] = []
         for(const section of sections) {
@@ -86,9 +85,6 @@ export class Hentai2Read extends Source {
             case 'top-rated':
                 url = `${DOMAIN}/hentai-list/all/any/all/top-rating/${page}`
                 break
-            case 'milfs':
-                url = `${DOMAIN}/hentai-list/category/milfs/s/last-updated/${page}`
-                break
         }
 
         const request = createRequestObject({
@@ -99,19 +95,7 @@ export class Hentai2Read extends Source {
         const response = await this.requestManager.schedule(request, 2)
         this.CloudFlareError(response.status)
 
-        const tiles = this.parser.parseMangaItems(response.data)
-
-        let mData
-        if (tiles.length < 48) {
-            mData = undefined
-        } else {
-            mData = {nextPage: page + 1}
-        }
-
-        return createPagedResults({
-            results: tiles,
-            metadata: mData
-        })
+        return  this.parser.parsePagedResult(response.data, page)
     }
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
@@ -183,30 +167,12 @@ export class Hentai2Read extends Source {
 
         const response = await this.requestManager.schedule(request, 1)
 
-        const tiles = this.parser.parseMangaItems(response.data)
-
-        let mData
-        if (tiles.length < 48) {
-            mData = undefined
-        } else {
-            mData = {nextPage: page + 1}
-        }
-
-        return createPagedResults({
-            results: tiles,
-            metadata: mData
-        })
+        return this.parser.parsePagedResult(response.data, page)
     }
-
-
 
     getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
         return Promise.prototype
     }
-
-    // override searchRequest(query: SearchRequest, metadata: any): Promise<PagedResults> {
-    //     throw new Error('Method not implemented.')
-    // }
 
     CloudFlareError(status: any) {
         if (status == 503) {
