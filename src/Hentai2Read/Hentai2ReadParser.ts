@@ -4,7 +4,8 @@ import {
     LanguageCode,
     Manga,
     MangaStatus,
-    MangaTile, PagedResults,
+    MangaTile,
+    PagedResults,
     Tag,
     TagSection
 } from 'paperback-extensions-common'
@@ -64,10 +65,12 @@ export class Hentai2ReadParser {
         const arrayTags: Tag[] = []
         //
         const tagsParent = $('ul.list.list-simple-mini > li > b:contains(Content)').parent()
+        const tags = this.getTags()[0]!.tags
 
         for (const tag of $('a', tagsParent).toArray()) {
             const label = $(tag).text().trim()
-            const id = encodeURI(label)
+            const optionalTag = tags.find(value => value.label === label)
+            const id = (optionalTag != undefined ? optionalTag.id : encodeURI(label))
 
             if (!id || !label) continue
             arrayTags.push({ id: id, label: label })
