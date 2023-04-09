@@ -3264,7 +3264,7 @@ class Hentai2ReadParser {
         const $ = this.cheerio.load(data);
         let images = [];
         for (const scriptObj of $('script').toArray()) {
-            if ($(scriptObj).html() != undefined && $(scriptObj).html().includes('gData')) {
+            if ($(scriptObj).html() != undefined && $(scriptObj).html().includes('var gData')) {
                 const gData = $(scriptObj).html();
                 const gDataClean = gData?.replace(/[\s\S]*var gData = /, '').replace(/;/g, '').replace(/'/g, '"') || '';
                 const gDataJson = JSON.parse(gDataClean);
